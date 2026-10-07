@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Rubik's Cube Guide</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f4f6;color:#111827}
+header{background:#111827;color:white;padding:18px 16px;text-align:center;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:24px}
+header p{margin:6px 0 0;font-size:13px;opacity:.85}
+main{max-width:720px;margin:auto;padding:14px}
+.card{background:white;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 10px #00000012}
+h2{font-size:20px;margin:0 0 10px}
+h3{font-size:17px;margin:14px 0 8px}
+p{line-height:1.5}
+button{border:0;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:bold;cursor:pointer;background:#111827;color:white}
+button.secondary{background:#e5e7eb;color:#111827}
+button:active{transform:scale(.98)}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
+.tabs button{font-size:13px;padding:11px 6px}
+.tabs button.active{background:#2563eb;color:white}
+.step{display:none}
+.step.active{display:block}
+.step-number{display:inline-flex;width:34px;height:34px;border-radius:50%;align-items:center;justify-content:center;background:#2563eb;color:white;font-weight:bold;margin-right:8px}
+.algorithm{background:#111827;color:white;border-radius:12px;padding:14px;text-align:center;font-size:21px;letter-spacing:2px;margin:12px 0}
+.moves{display:flex;flex-wrap:wrap;gap:7px}
+.moves button{min-width:50px;padding:10px;background:#2563eb}
+.move-display{text-align:center;background:#eff6ff;border-radius:12px;padding:12px;margin-top:10px;font-weight:bold}
+.progress-wrap{height:12px;background:#e5e7eb;border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;background:#2563eb;transition:.25s}
+.notation{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.notation div{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:10px}
+.cube{width:150px;height:150px;margin:15px auto;position:relative}
+.face{position:absolute;width:70px;height:70px;display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.face span{border-radius:3px;border:1px solid #333}
+.up{left:40px;top:0}.left{left:0;top:40px}.front{left:40px;top:40px}
+.right{left:80px;top:40px}.down{left:40px;top:80px}
+.white{background:#fff}.yellow{background:#ffd92f}.red{background:#ef4444}
+.orange{background:#f97316}.blue{background:#3b82f6}.green{background:#22c55e}
+.status{font-size:13px;color:#4b5563}
+footer{text-align:center;font-size:12px;color:#6b7280;padding:10px 0 25px}
+@media(max-width:420px){main{padding:10px}.card{padding:13px}.notation{grid-template-columns:1fr}.algorithm{font-size:18px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧩 Rubik's Cube Guide</h1>
+  <p>Beginner method • Learn one step at a time</p>
+</header>
+
+<main>
+  <div class="card">
+    <h2>Your Progress</h2>
+    <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
+    <p id="progressText" class="status">0 of 7 steps completed</p>
+    <button class="secondary" onclick="resetProgress()">Reset Progress</button>
+  </div>
+
+  <div class="tabs">
+    <button class="active" onclick="showStep(1)">1. Cross</button>
+    <button onclick="showStep(2)">2. Corners</button>
+    <button onclick="showStep(3)">3. Middle</button>
+    <button onclick="showStep(4)">4. Yellow Cross</button>
+    <button onclick="showStep(5)">5. Yellow Edges</button>
+    <button onclick="showStep(6)">6. Yellow Corners</button>
+    <button onclick="showStep(7)">7. Finish</button>
+    <button onclick="showStep(8)">Notation</button>
+    <button onclick="showStep(9)">Practice</button>
+  </div>
+
+  <section id="step1" class="step active">
+    <div class="card">
+      <h2><span class="step-number">1</span>White Cross</h2>
+      <p>Make a white cross on the white face. Also line up each side colour with its matching centre.</p>
+      <h3>Goal</h3>
+      <p>White cross + the four side colours correctly aligned.</p>
+      <button onclick="completeStep(1)">✓ Mark Step Complete</button>
+    </div>
+  </section>
+
+  <section id="step2" class="step">
+    <div class="card">
+      <h2><span class="step-number">2</span>White Corners</h2>
+      <p>Place each white corner into its correct position. Put the corner below its destination and repeat:</p>
+      <div class="algorithm">R' D' R D</div>
+      <p>Repeat the four-move sequence until the corner is correctly inserted.</p>
+      <button onclick="completeStep(2)">✓ Mark Step Complete</button>
+    </div>
+  </section>
+
+  <section id="step3" class="step">
+    <div class="card">
+      <h2><span class="step-number">3</span>Middle Layer</h2>
+      <p>Find a top-layer edge without yellow. Match its front colour with the centre.</p>
+      <h3>Move edge to the right</h3>
+      <div class="algorithm">U R U' R' U' F' U F</div>
+      <h3>Move edge to the left</h3>
+      <div class="algorithm">U' L' U L U F U' F'</div>
+      <button onclick="completeStep(3)">✓ Mark Step Complete</button>
+    </div>
+  </section>
+
+  <section id="step4" class="step">
+    <div class="card">
+      <h2><span class="step-number">4</span>Yellow Cross</h2>
+      <p>Hold the yellow face on top. Use this algorithm to progress from dot → L → line → cross:</p>
+      <div class="algorithm">F R U R' U' F'</div>
+      <p>You may need to repeat it. For an L shape, hold the L at the upper-left. For a line, hold it horizontally.</p>
+      <button onclick="completeStep(4)">✓ Mark Step Complete</button>
+    </div>
+  </section>
+
+  <section id="step5" class="step">
+    <div class="card">
+      <h2><span class="step-number">5</span>Yellow Edges</h2>
+      <p>Turn the top until at least one yellow edge matches its side centre. Hold the solved edge at the back and use:</p>
+      <div class="algorithm">R U R' U R U2 R'</div>
+      <p>Repeat as needed until all four yellow edges match their centres.</p>
+      <button onclick="completeStep(5)">✓ Mark Step Complete</button>
+    </div>
+  </section>
+
+  <section id="step6" class="step">
+    <div class="card">
+      <h2><span class="step-number">6</span>Position Yellow Corners</h2>
+      <p>Find a corner that is in the correct location, even if its yellow sticker is not facing up. Hold it at the front-right-top position.</p>
+      <div class="algorithm">U R U' L' U R' U' L</div>
+      <p>Repeat until all four yellow corners are in their correct locations.</p>
+      <button onclick="completeStep(6)">✓ Mark Step Complete</button>
+    </div>
+  </section>
+
+  <section id="step7" class="step">
+    <div class="card">
+      <h2><span class="step-number">7</span>Finish the Yellow Face</h2>
+      <p>Keep the cube in the same orientation. Put an unsolved yellow corner at the front-right-top.</p>
+      <div class="algorithm">R' D' R D</div>
+      <p>Repeat the sequence until that corner has yellow on top. Then turn only the top layer to bring the next unsolved corner into position. Do not rotate the whole cube.</p>
+      <p><strong>Important:</strong> The cube may look scrambled during this step. Keep going and it will restore itself.</p>
+      <button onclick="completeStep(7)">🎉 Cube Solved!</button>
+    </div>
+  </section>
+
+  <section id="step8" class="step">
+    <div class="card">
+      <h2>Move Notation</h2>
+      <div class="notation">
+        <div><b>R</b> — Right clockwise</div>
+        <div><b>R'</b> — Right anti-clockwise</div>
+        <div><b>L</b> — Left clockwise</div>
+        <div><b>L'</b> — Left anti-clockwise</div>
+        <div><b>U</b> — Up clockwise</div>
+        <div><b>U'</b> — Up anti-clockwise</div>
+        <div><b>D</b> — Down clockwise</div>
+        <div><b>D'</b> — Down anti-clockwise</div>
+        <div><b>F</b> — Front clockwise</div>
+        <div><b>F'</b> — Front anti-clockwise</div>
+        <div><b>B</b> — Back clockwise</div>
+        <div><b>B'</b> — Back anti-clockwise</div>
+        <div><b>2</b> — Turn twice, e.g. U2</div>
+      </div>
+      <p><strong>Clockwise means as you look directly at that face.</strong></p>
+    </div>
+  </section>
+
+  <section id="step9" class="step">
+    <div class="card">
+      <h2>🎯 Practice Move Sequence</h2>
+      <p>Choose an algorithm and practise each move individually.</p>
+      <select id="algorithmSelect" style="width:100%;padding:12px;border-radius:10px;border:1px solid #d1d5db;font-size:15px" onchange="loadAlgorithm()">
+        <option value="R' D' R D">Corner: R' D' R D</option>
+        <option value="F R U R' U' F'">Yellow Cross: F R U R' U' F'</option>
+        <option value="R U R' U R U2 R'">Yellow Edges: R U R' U R U2 R'</option>
+        <option value="U R U' L' U R' U' L">Yellow Corners: U R U' L' U R' U' L</option>
+      </select>
+      <div id="moveDisplay" class="move-display">Press Start</div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button onclick="startPractice()">Start</button>
+        <button class="secondary" onclick="nextMove()">Next Move</button>
+        <button class="secondary" onclick="resetPractice()">Reset</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Visual Reference</h2>
+      <div class="cube" aria-label="simple cube illustration">
+        <div class="face up" id="cubeUp"></div>
+        <div class="face left" id="cubeLeft"></div>
+        <div class="face front" id="cubeFront"></div>
+        <div class="face right" id="cubeRight"></div>
+        <div class="face down" id="cubeDown"></div>
+      </div>
+      <p class="status">This illustration is a learning aid, not a live cube simulator.</p>
+    </div>
+  </section>
+
+  <footer>Rubik's Cube Beginner Guide • GitHub-ready • No external libraries</footer>
+</main>
+
+<script>
+"use strict";
+
+const TOTAL_STEPS = 7;
+let completed = JSON.parse(localStorage.getItem("rubiksProgress") || "[]");
+let practiceMoves = [];
+let practiceIndex = -1;
+
+function showStep(number) {
+  document.querySelectorAll(".step").forEach(section => section.classList.remove("active"));
+  const selected = document.getElementById("step" + number);
+  if (selected) selected.classList.add("active");
+
+  document.querySelectorAll(".tabs button").forEach(button => button.classList.remove("active"));
+  const buttons = document.querySelectorAll(".tabs button");
+  const index = number - 1;
+  if (buttons[index]) buttons[index].classList.add("active");
+
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function completeStep(step) {
+  if (!completed.includes(step)) completed.push(step);
+  completed.sort((a,b) => a-b);
+  localStorage.setItem("rubiksProgress", JSON.stringify(completed));
+  updateProgress();
+}
+
+function resetProgress() {
+  if (!confirm("Reset all learning progress?")) return;
+  completed = [];
+  localStorage.removeItem("rubiksProgress");
+  updateProgress();
+}
+
+function updateProgress() {
+  const count = completed.filter(n => n >= 1 && n <= TOTAL_STEPS).length;
+  const percent = Math.round((count / TOTAL_STEPS) * 100);
+  document.getElementById("progressBar").style.width = percent + "%";
+  document.getElementById("progressText").textContent =
+    count + " of " + TOTAL_STEPS + " steps completed (" + percent + "%)";
+}
+
+function getSelectedMoves() {
+  const value = document.getElementById("algorithmSelect").value.trim();
+  return value ? value.split(/\s+/) : [];
+}
+
+function loadAlgorithm() {
+  practiceMoves = getSelectedMoves();
+  practiceIndex = -1;
+  document.getElementById("moveDisplay").textContent = "Press Start";
+}
+
+function startPractice() {
+  practiceMoves = getSelectedMoves();
+  practiceIndex = 0;
+  showCurrentMove();
+}
+
+function nextMove() {
+  if (practiceMoves.length === 0) loadAlgorithm();
+  if (practiceMoves.length === 0) return;
+
+  if (practiceIndex < 0) practiceIndex = 0;
+  else practiceIndex++;
+
+  if (practiceIndex >= practiceMoves.length) {
+    document.getElementById("moveDisplay").textContent = "✓ Sequence complete — repeat if needed";
+    practiceIndex = -1;
+    return;
+  }
+  showCurrentMove();
+}
+
+function showCurrentMove() {
+  const move = practiceMoves[practiceIndex];
+  document.getElementById("moveDisplay").textContent =
+    "Move " + (practiceIndex + 1) + " of " + practiceMoves.length + ":  " + move;
+}
+
+function resetPractice() {
+  practiceMoves = getSelectedMoves();
+  practiceIndex = -1;
+  document.getElementById("moveDisplay").textContent = "Press Start";
+}
+
+function fillFace(id, colour) {
+  const face = document.getElementById(id);
+  face.innerHTML = "";
+  for (let i = 0; i < 9; i++) {
+    const square = document.createElement("span");
+    square.className = colour;
+    face.appendChild(square);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateProgress();
+  loadAlgorithm();
+  fillFace("cubeUp", "white");
+  fillFace("cubeLeft", "orange");
+  fillFace("cubeFront", "green");
+  fillFace("cubeRight", "red");
+  fillFace("cubeDown", "yellow");
+});
+</script>
+</body>
+</html>
